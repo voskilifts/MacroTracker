@@ -10,6 +10,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--bg:#f2f2f7;--card:#fff;--border:#e5e5e5;--text:#1a1a1a;--sub:#888;--faint:#f7f7f7;--green:#16a34a;--gbg:#f0fdf4;--red:#dc2626;--rbg:#fef2f2;--yellow:#d97706;--ybg:#fffbeb;--blue:#2563eb;--bbg:#eff6ff;--radius:14px;--safe-bottom:env(safe-area-inset-bottom,0px)}
+body.dark{--bg:#0f0f0f;--card:#1c1c1e;--border:#2c2c2e;--text:#f2f2f2;--sub:#8e8e93;--faint:#2c2c2e;--green:#30d158;--gbg:#0d2e18;--red:#ff453a;--rbg:#2e0f0d;--yellow:#ffd60a;--ybg:#2e2600;--blue:#0a84ff;--bbg:#001a33}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding-bottom:calc(70px + var(--safe-bottom));max-width:520px;margin:0 auto;min-height:100vh}
 .page{display:none;padding:16px}
 .page.active{display:block}
@@ -71,6 +72,8 @@ button:disabled{opacity:.4;cursor:default}
 .saved{font-size:13px;color:var(--green);margin-top:6px}
 /* bottom nav */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:flex;padding-bottom:var(--safe-bottom);z-index:100;max-width:520px;margin:0 auto}
+body.dark .bottom-nav{background:rgba(28,28,30,.95)}
+.dark-toggle{background:none;border:none;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:8px;line-height:1}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;cursor:pointer;border:none;background:none;color:var(--sub);font-size:10px;font-family:inherit;font-weight:500;gap:3px;transition:color .15s}
 .nav-item.active{color:var(--text)}
 .nav-icon{font-size:22px;line-height:1}
@@ -309,6 +312,13 @@ button:disabled{opacity:.4;cursor:default}
 <!-- SETTINGS PAGE -->
 <div class="page" id="page-settings">
 <h2>Settings</h2>
+<div class="card">
+  <div class="stitle">Appearance</div>
+  <div class="settings-row">
+    <div><div class="settings-lbl">Dark mode</div><div class="settings-sub">Easy on the eyes</div></div>
+    <button class="dark-toggle" id="darkBtn" onclick="toggleDark()">🌙</button>
+  </div>
+</div>
 <div class="card">
   <div class="stitle">Goals</div>
   <div class="settings-row">
@@ -647,7 +657,15 @@ function renderProgress(){
 function clearToday(){if(!confirm('Clear all data for Day '+S.currentDay+'?'))return;S.days['d'+S.currentDay]={meals:[],cardio:[],water:0};sv();renderDay();}
 
 // Init
-ld();loadSettings();renderDay();
+function toggleDark(){
+  var on=document.body.classList.toggle('dark');
+  S.darkMode=on;sv();
+  document.getElementById('darkBtn').textContent=on?'☀️':'🌙';
+}
+function applyDark(){
+  if(S.darkMode){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️';}
+}
+ld();loadSettings();renderDay();applyDark();
 updateFastBtn();tickFast();
 if(S.fastRunning)fastInterval=setInterval(tickFast,1000);
 else fastInterval=setInterval(function(){if(S.fastRunning){clearInterval(fastInterval);fastInterval=setInterval(tickFast,1000);}},500);
